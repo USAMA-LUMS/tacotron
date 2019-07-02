@@ -2,6 +2,7 @@ import argparse
 import falcon
 from hparams import hparams, hparams_debug_string
 import os
+import requests
 from synthesizer import Synthesizer
 
 
@@ -67,7 +68,9 @@ class SynthesisResource:
   def on_get(self, req, res):
     if not req.params.get('text'):
       raise falcon.HTTPBadRequest()
-    res.data = synthesizer.synthesize(req.params.get('text'))
+    url='http://127.0.0.1:8080/get_sentence/'+req.params.get('text')
+    text=requests.get(url).text
+    res.data = synthesizer.synthesize(text)
     res.content_type = 'audio/wav'
 
 
