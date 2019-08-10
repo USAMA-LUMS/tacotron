@@ -1,22 +1,12 @@
 import argparse
 import os
 import re
+import requests
 from hparams import hparams, hparams_debug_string
 from synthesizer import Synthesizer
 
 
-sentences = [
-  # From July 8, 2017 New York Times:
-  'Scientists at the CERN laboratory say they have discovered a new particle.',
-  'There’s a way to measure the acute emotional intelligence that has never gone out of style.',
-  'President Trump met with other leaders at the Group of 20 conference.',
-  'The Senate\'s bill to repeal and replace the Affordable Care Act is now imperiled.',
-  # From Google's Tacotron example page:
-  'Generative adversarial network or variational auto-encoder.',
-  'The buses aren\'t the problem, they actually provide a solution.',
-  'Does the quick brown fox jump over the lazy dog?',
-  'Talib Kweli confirmed to AllHipHop that he will be releasing an album in the next year.',
-]
+sentences = []
 
 
 def get_output_base_path(checkpoint_path):
@@ -32,11 +22,19 @@ def run_eval(args):
   synth.load(args.checkpoint)
   base_path = get_output_base_path(args.checkpoint)
   for i, text in enumerate(sentences):
-    path = '%s-%d.wav' % (base_path, i)
+    path = '%s-%03d.wav' % (base_path, i)
     print('Synthesizing: %s' % path)
     with open(path, 'wb') as f:
+      url='http://127.0.0.1:8080/get_sentence/'+text
+      text=requests.get(url).text
       f.write(synth.synthesize(text))
 
+def read_sentences():
+  with open('test_sentences.txt','r',encoding='utf8') as fin:
+    text=fin.read()
+    text=text.split('\n')
+  for line in text:
+    sentences.append(line)
 
 def main():
   parser = argparse.ArgumentParser()
@@ -49,5 +47,7 @@ def main():
   run_eval(args)
 
 
+
 if __name__ == '__main__':
+  read_sentences()
   main()

@@ -85,8 +85,7 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--checkpoint', required=True, help='Full path to model checkpoint')
   parser.add_argument('--port', type=int, default=9000)
-  parser.add_argument('--hparams', default='',
-    help='Hyperparameter overrides as a comma-separated list of name=value pairs')
+  parser.add_argument('--hparams', default='', help='Hyperparameter overrides as a comma-separated list of name=value pairs')
   args = parser.parse_args()
   os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
   hparams.parse(args.hparams)
